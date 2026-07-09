@@ -15,11 +15,12 @@ MONATE = ("Januar|Februar|März|April|Mai|Juni|"
 SATZ = re.compile(r"aktuell\s+Bewerbungen.{0,200}?beginnen\.", re.IGNORECASE)
 DATUM = re.compile(rf"\d{{1,2}}\.\s*(?:{MONATE})\s*\d{{4}}")
 
-
 def notify(titel: str, text: str) -> None:
-    requests.post(NTFY_URL, data=text.encode("utf-8"),
-                  headers={"Title": titel, "Priority": "high",
-                           "Tags": "briefcase", "Click": URL}, timeout=15)
+    r = requests.post(NTFY_URL, data=text.encode("utf-8"),
+                      headers={"Title": titel, "Priority": "high",
+                               "Tags": "briefcase", "Click": URL}, timeout=15)
+    r.raise_for_status()
+    print(f"ntfy-Antwort: {r.status_code} – {r.text[:200]}")
 
 
 def fetch_fenster() -> str:
